@@ -2,6 +2,7 @@ package com.example.test_pay.entity;
 
 import com.example.test_pay.model.QuestionCreateDto;
 import com.sun.istack.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +14,7 @@ import java.util.List;
 @Table(name = "questions")
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 public class QuestionEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -43,7 +45,5 @@ public class QuestionEntity {
         this.currentAnswer = dto.getCurrentAnswer();
         this.test_id = dto.getTest_id();
     }
-
-
 
 }

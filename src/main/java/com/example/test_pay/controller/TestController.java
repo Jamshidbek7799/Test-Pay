@@ -16,11 +16,11 @@ public class TestController {
     @Autowired
     private TestService testService;
 
-        @PostMapping("/add")
+    @PostMapping("/add")
     ResponseEntity<?> createUser(@RequestBody TestCreateDto dto){
-        TestDto testDto = testService.createTest(dto);
-        return ResponseEntity.ok(testDto);
+        return ResponseEntity.ok(testService.createTest(dto));
     }
+
 
 
 }

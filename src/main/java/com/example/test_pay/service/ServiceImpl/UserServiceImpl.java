@@ -1,7 +1,7 @@
 package com.example.test_pay.service.ServiceImpl;
 
 import com.example.test_pay.entity.TestEntity;
-import com.example.test_pay.entity.User;
+import com.example.test_pay.entity.UserEntity;
 import com.example.test_pay.model.CreateUserDto;
 import com.example.test_pay.model.UserDto;
 import com.example.test_pay.repository.TestRepository;
@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
     public UserDto openTeacherAccount(CreateUserDto dto) {
         dto.setRole(Role.TEACHER);
 
-        User userEntity = new User();
+        UserEntity userEntity = new UserEntity();
         BeanUtils.copyProperties(dto, userEntity);
         userRepository.save(userEntity);
 
@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
     // get all user
     @Override
     public ResponseEntity<List<UserDto>> getUsers() {
-        List<User> userEntities = userRepository.findAll();
+        List<UserEntity> userEntities = userRepository.findAll();
         List<UserDto> dtos = new ArrayList<>();
         userEntities.forEach(userEntity -> {
             UserDto dto = new UserDto();
@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
     public UserDto openAccountStudent(CreateUserDto dto) {
         dto.setRole(Role.STUDENT);
 
-        User userEntity = new User();
+        UserEntity userEntity = new UserEntity();
         BeanUtils.copyProperties(dto, userEntity);
         userRepository.save(userEntity);
 
@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto updateUser(UserDto dto) {
-        Optional<User> optional = userRepository.findById(dto.getId());
+        Optional<UserEntity> optional = userRepository.findById(dto.getId());
         if (!optional.isPresent())
             return null;
 
@@ -87,7 +87,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Object getTest(Long studentId, Long testId) {
-        Optional<User> userEntityOptional = userRepository.findById(studentId);
+        Optional<UserEntity> userEntityOptional = userRepository.findById(studentId);
         Optional<TestEntity> testEntityOptional = testRepository.findById(testId);
 
         if (!userEntityOptional.isPresent())
@@ -95,18 +95,27 @@ public class UserServiceImpl implements UserService {
         if (!testEntityOptional.isPresent())
             return ResponseEntity.ok("not found test " + testId);
 
-        User userEntity = userEntityOptional.get();
+
+        UserEntity userEntity = userEntityOptional.get();
         TestEntity testEntity = testEntityOptional.get();
 
         if (userEntity.getBalance().compareTo(testEntity.getPrice()) <= 0)
-            return ResponseEntity.ok("puling jetmidi jiyan");
+            return ResponseEntity.ok("You don't have enough Money: "+ userEntity.getBalance());
 
 
         userEntity.setBalance(userEntity.getBalance().subtract(testEntity.getPrice()));
+
+        Optional<UserEntity> optionalUserEntity = userRepository.findById(testEntity.getTeacher_Id());
+        if(optionalUserEntity.isPresent()){
+            UserEntity teacher = optionalUserEntity.get();
+            teacher.setBalance(teacher.getBalance().add(testEntity.getPrice()));
+            userRepository.save(teacher);
+        }
+
         userRepository.save(userEntity);
 
 
 
-        return ResponseEntity.ok("ok");
+        return ResponseEntity.ok("Payment was made Successfully.\nYour money: "+userEntity.getBalance());
     }
 }

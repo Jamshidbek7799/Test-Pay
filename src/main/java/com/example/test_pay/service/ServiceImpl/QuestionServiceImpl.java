@@ -1,5 +1,6 @@
 package com.example.test_pay.service.ServiceImpl;
 
+import com.example.test_pay.entity.CurrentEnum;
 import com.example.test_pay.entity.QuestionEntity;
 import com.example.test_pay.entity.TestEntity;
 import com.example.test_pay.model.QuestionCreateDto;
@@ -28,9 +29,27 @@ public class QuestionServiceImpl implements QuestionService {
             return ResponseEntity.ok("ERROR GUYS");
 
         QuestionEntity questionEntity = new QuestionEntity(dto);
+
         System.out.println(questionEntity.getAnsA() + " "+questionEntity.getTest_id() + " "+ questionEntity.getText());
+
         questionRepository.save(questionEntity);
 
         return ResponseEntity.ok(questionEntity);
     }
+
+    @Override
+    public ResponseEntity<?> getTestItem(Long questionId, CurrentEnum answerId) {
+        Optional<QuestionEntity> optionalQuestionEntity = questionRepository.findById(questionId);
+
+        if (!optionalQuestionEntity.isPresent())
+            return ResponseEntity.ok("not found question " + questionId);
+
+        if (optionalQuestionEntity.get().getCurrentAnswer() == answerId){
+            return ResponseEntity.ok(true);
+        }
+
+        return ResponseEntity.ok(false);
+    }
+
+
 }

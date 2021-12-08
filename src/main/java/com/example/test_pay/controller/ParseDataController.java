@@ -21,6 +21,7 @@ public class ParseDataController {
 
     @GetMapping()
     public ResponseEntity<?> excelExport(@RequestParam String type) throws SQLException, IOException {
+        System.out.println(type);
         return parseDataService.excelExport(type);
     }
 

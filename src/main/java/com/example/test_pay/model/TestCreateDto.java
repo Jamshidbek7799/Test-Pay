@@ -9,4 +9,6 @@ public class TestCreateDto {
 
     private BigDecimal price;
     private String title;
+    private Long teacherId;
+
 }

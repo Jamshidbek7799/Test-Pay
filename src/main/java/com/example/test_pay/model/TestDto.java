@@ -10,4 +10,6 @@ public class TestDto {
     private Long id;
     private BigDecimal price;
     private String title;
+    private Long teacherId;
+
 }

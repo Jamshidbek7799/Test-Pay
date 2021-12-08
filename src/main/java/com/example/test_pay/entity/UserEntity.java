@@ -9,10 +9,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 @NoArgsConstructor
 @AllArgsConstructor
 
-public class User extends AbstractAuditableEntity<User, Long> {
+public class UserEntity extends AbstractAuditableEntity<UserEntity, Long> {
 
     @NotNull
     private Role role;
@@ -36,7 +36,7 @@ public class User extends AbstractAuditableEntity<User, Long> {
     @NotNull
     private String password;
 
-    public User(CreateUserDto dto){
+    public UserEntity(CreateUserDto dto){
         this.role = dto.getRole();
         this.userName = dto.getUserName();
         this.balance = dto.getBalance();
@@ -50,5 +50,8 @@ public class User extends AbstractAuditableEntity<User, Long> {
         this.password = dto.getPassword();
     }
 
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "teacher_Id")
+    private List<TestEntity> link = new ArrayList<>();
 
 }
